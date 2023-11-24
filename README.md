@@ -9,6 +9,8 @@ We use websockets to update the attendance of users in the dashboard page in rea
 
 This is a simple project for a recruitment event.
 
+Refer to slides [here](https://docs.google.com/presentation/d/1u7YjUSHHL2uH6AP5SWW0gOJUZRc2rtRntjvD9MIJ1Co/edit#slide=id.p)for deploying onto pythonanywhere.
+
 # Setup
 
 1. Download dependencies
