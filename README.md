@@ -20,8 +20,9 @@ pip install flask flask_socketio qrcode
 2. Run the server
 
 ```
-python app_flask.py
+python flask_app.py
 ```
 
 # UI
+
 <img width="701" alt="Screenshot 2023-11-24 at 4 18 42 PM" src="https://github.com/bengit96/AttendanceTaking/assets/47444881/013bb709-b797-4881-a4f0-13fadedab219">
