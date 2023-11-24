@@ -1,0 +1,96 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script type="text/javascript">
+        var protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+        var socket = io.connect(protocol + '://' + document.domain + ':' + location.port);
+
+        socket.on('update_dashboard', function(data) {
+            var studentName = data['student_name'];
+            var attendanceStatus = data['student_attendance'];
+            var attendanceTable = document.getElementById('attendance-table');
+            if (attendanceTable) {
+            // Check if the row for the student already exists
+            var existingRow = document.getElementById(studentName);
+            
+            if (existingRow) {
+                // Update the existing row
+                var statusCell = existingRow.querySelector('.status');
+                if (statusCell) {
+                    statusCell.innerHTML = attendanceStatus ? 'Marked' : 'Absent';
+                }
+            } else {
+                // Add a new row for the student
+                var newRow = attendanceTable.insertRow();
+                newRow.id = studentName
+
+                // Add cells for student name and attendance status
+                var nameCell = newRow.insertCell(0);
+                nameCell.textContent = studentName;
+
+                var statusCell = newRow.insertCell(1);
+                statusCell.className = 'status';
+                statusCell.innerHTML = 'Present'
+            }
+            }
+        });
+
+        function generateQRCode() {
+            var qrCodeDiv = document.getElementById('single-qrcode');
+            var urlDisplayDiv = document.getElementById('url-qrcode');
+            if (qrCodeDiv) {
+                // Clear existing QR code
+                qrCodeDiv.innerHTML = '';
+                var rootURL = window.location.origin;
+                // Generate new QR code
+                var attendanceUrl = rootURL+'/attendance'
+                var qr = new QRious({
+                    element: qrCodeDiv,
+                    value: attendanceUrl,
+                    size: 200
+                });
+                var linkElement = document.createElement('a');
+                urlDisplayDiv.innerHTML = 'Attendance URL: '
+                linkElement.innerHTML = attendanceUrl;
+                linkElement.href = attendanceUrl;
+                urlDisplayDiv.appendChild(linkElement);
+            }
+        }
+        // Call the function when the DOM content is loaded
+        document.addEventListener('DOMContentLoaded', generateQRCode);
+
+    </script>
+</head>
+<body>
+    <h1>Attendance Dashboard</h1>
+    <p>
+        <canvas id="single-qrcode"></canvas>
+    </p>
+    <p>
+        <div id="url-qrcode"></div>
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Attendance Status</th>
+            </tr>
+        </thead>
+            <tbody id="attendance-table">
+                {% for student, status in attendance_data.items() %}
+                <tr>
+                    <td id="{{ student }}">{{ student }}</td>
+                    <td>{% if status %}Present{% else %}Absent{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+    </table>
+</body>
+</html>
